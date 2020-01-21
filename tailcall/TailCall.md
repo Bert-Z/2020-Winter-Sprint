@@ -55,3 +55,6 @@ function foo3(data) {
 由于当前[函数帧](https://zh.wikipedia.org/wiki/函数帧)上包含局部变量等等大部分的东西都不需要了，当前的函数帧经过适当的更动以后可以直接当作被尾调用的函数的帧使用，然后程序即可以[跳](https://zh.wikipedia.org/wiki/分支_(計算機科學))到被尾调用的函数。产生这种函数帧更动代码与 “jump”（而不是一般常规函数调用的代码）的过程称作**尾调用消除**(Tail Call Elimination)或**尾调用优化**(Tail Call Optimization, TCO)。尾调用优化让位于尾位置的函数调用跟 [`goto` 语句](https://zh.wikipedia.org/wiki/Goto)性能一样高，也因此使得高效的结构编程成为现实。
 
 然而，对于 [C++](https://zh.wikipedia.org/wiki/C%2B%2B) 等语言来说，在函数最后 return g(x); 并不一定是尾递归——在返回之前很可能涉及到对象的[析构函数](https://zh.wikipedia.org/wiki/析构函数)，使得 g(x) 不是最后执行的那个。这可以通过[返回值优化](https://zh.wikipedia.org/wiki/返回值优化)来解决。
+
+通过汇编分析的例子:
+https://blog.csdn.net/longintchar/article/details/79101221
