@@ -1,15 +1,13 @@
-#include "stopwatch.h"
+#include "timer.h"
 #include <iostream>
 
 int main()
 {
-    const auto cycles = stopwatch::time([] {
-        for (std::size_t i = 0; i < 10; ++i)
-        {
-            std::cout << i << std::endl;
-        }
+    const auto cycles = timer::time([] {
+        // func need to be timed
     });
 
-    std::cout << "To print out 10 numbers, it took " << cycles.count()
-              << " cycles." << std::endl;
+    // cpu speed is 2099.996 MHz
+    ulong count = cycles.count();
+    std::cout << "It took " << count << " cycles, " << count / 2.099996 << " (ns)" << std::endl;
 }

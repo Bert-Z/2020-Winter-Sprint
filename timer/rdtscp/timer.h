@@ -1,5 +1,5 @@
-#ifndef STOPWATCH_H_
-#define STOPWATCH_H_
+#ifndef TIMER_H_
+#define TIMER_H_
 
 #include <algorithm>
 #include <array>
@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <ratio>
 
-namespace stopwatch {
+namespace timer {
 // An implementation of the 'TrivialClock' concept using the rdtscp instruction.
 struct rdtscp_clock {
   using rep = std::uint64_t;
@@ -67,6 +67,6 @@ auto sample(Func&& function) -> std::array<typename Clock::duration, N> {
   std::sort(samples.begin(), samples.end());
   return samples;
 }
-} /* namespace stopwatch */
+} /* namespace time */
 
-#endif  // STOPWATCH_H_
+#endif  // TIMER_H_

@@ -6,16 +6,15 @@ timespec diff(timespec start, timespec end);
 int main()
 {
     timespec time1, time2;
-    int temp;
     clock_gettime(CLOCK_REALTIME, &time1);
-    for (int i = 0; i < 242000000; i++)
-        temp += temp;
+    // func need to be timed
     clock_gettime(CLOCK_REALTIME, &time2);
-    cout << diff(time1, time2).tv_sec << ":" << diff(time1, time2).tv_nsec << endl;
+    timespec t = diff(time1, time2);
+    cout << t.tv_sec * 1000000000 + t.tv_nsec << " (ns)" << endl;
     return 0;
 }
 
-timespec diff(timespec start, timespec end)
+inline timespec diff(timespec start, timespec end)
 {
     timespec temp;
     if ((end.tv_nsec - start.tv_nsec) < 0)
