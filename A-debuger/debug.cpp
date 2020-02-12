@@ -5,46 +5,48 @@ using namespace std;
 class Solution
 {
 public:
-    int maxProfit(vector<int> &prices)
+    int coinChange(vector<int> &coins, int amount)
     {
-        int ssize = prices.size();
+        sort(coins.begin(), coins.end());
 
-        vector<int> buy(ssize, 0);
-        vector<int> sell(ssize, 0);
+        vector<int> dp(amount + 1, INT32_MAX);
 
-        buy[0] = -prices[0];
-        buy[1] = max(-prices[0], -prices[1]);
-        sell[0] = 0;
-        sell[1] = max(0, prices[1] - prices[0]);
 
-        for (int i = 2; i < ssize; i++)
+        for (int i = 1; i <= amount; i++)
         {
-            buy[i] = max(buy[i - 1], sell[i - 2] - prices[i]);
-            sell[i] = max(sell[i - 1], buy[i - 1] + prices[i]);
+            for (int x : coins)
+            {
+                if (x > i)
+                    break;
+
+                if (x == i)
+                    dp[i] = 1;
+
+                if (dp[i - x] != INT32_MAX)
+                    dp[i] = min(dp[i], dp[i - x] + 1);
+            }
         }
 
-        return max(buy[ssize - 1], sell[ssize - 1]);
+        if (dp[amount] == INT32_MAX)
+            return -1;
+
+        return dp[amount];
     }
 };
 
-void trimLeftTrailingSpaces(string &input)
-{
+void trimLeftTrailingSpaces(string &input) {
     input.erase(input.begin(), find_if(input.begin(), input.end(), [](int ch) {
-                    return !isspace(ch);
-                }));
+        return !isspace(ch);
+    }));
 }
 
-void trimRightTrailingSpaces(string &input)
-{
+void trimRightTrailingSpaces(string &input) {
     input.erase(find_if(input.rbegin(), input.rend(), [](int ch) {
-                    return !isspace(ch);
-                })
-                    .base(),
-                input.end());
+        return !isspace(ch);
+    }).base(), input.end());
 }
 
-vector<int> stringToIntegerVector(string input)
-{
+vector<int> stringToIntegerVector(string input) {
     vector<int> output;
     trimLeftTrailingSpaces(input);
     trimRightTrailingSpaces(input);
@@ -53,21 +55,24 @@ vector<int> stringToIntegerVector(string input)
     ss.str(input);
     string item;
     char delim = ',';
-    while (getline(ss, item, delim))
-    {
+    while (getline(ss, item, delim)) {
         output.push_back(stoi(item));
     }
     return output;
 }
 
-int main()
-{
-    string line;
-    while (getline(cin, line))
-    {
-        vector<int> prices = stringToIntegerVector(line);
+int stringToInteger(string input) {
+    return stoi(input);
+}
 
-        int ret = Solution().maxProfit(prices);
+int main() {
+    string line;
+    while (getline(cin, line)) {
+        vector<int> coins = stringToIntegerVector(line);
+        getline(cin, line);
+        int amount = stringToInteger(line);
+        
+        int ret = Solution().coinChange(coins, amount);
 
         string out = to_string(ret);
         cout << out << endl;
