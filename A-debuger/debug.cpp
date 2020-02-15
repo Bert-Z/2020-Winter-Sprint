@@ -1,58 +1,58 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+
 #include <bits/stdc++.h>
 
 using namespace std;
 
+struct TreeNode
+{
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
 class Solution
 {
 public:
-    int change(int amount, vector<int> &coins)
+    vector<int> postorderTraversal(TreeNode *root)
     {
-        if (amount == 0)
-            return 1;
+        stack<TreeNode *> nodeStack;
+        map<TreeNode *, bool> nmap;
+        vector<int> ret;
 
-        // vector<int> cnums;
-
-        // for (int x : coins)
-        //     for (int i = 0; i < amount / x; i++)
-        //         cnums.push_back(x);
-
-        int ssize = coins.size();
-        vector<vector<int>> dp(ssize + 1, vector<int>(amount + 1, 0));
-
-        for (int i = 0; i <= ssize; i++)
-            dp[i][0] = 1;
-
-        for (int i = 1; i <= amount; i++)
-            dp[0][i] = 0;
-
-        for (int i = 1; i <= ssize; i++)
+        while (root != NULL || !nodeStack.empty())
         {
-            for (int j = 1; j <= amount; j++)
+            for (; root != NULL && nmap.find(root) == nmap.end(); root = root->left)
             {
-                dp[i][j] = dp[i - 1][j];
+                nodeStack.push(root);
+                nmap[root] = false;
+            }
 
-                if (j >= coins[i - 1])
-                    for (int k = 1; k <= j / coins[i - 1]; k++)
-                        dp[i][j] += dp[i - 1][j - k * coins[i - 1]];
+            TreeNode *now = nodeStack.top();
+
+            if (now->right != NULL && nmap.find(now->right) == nmap.end())
+                root = now->right;
+            else if ((now->left == NULL && now->right == NULL) || (now->left == NULL && nmap[now->right]) || (nmap[now->left] && now->right == NULL) || (nmap[now->left] && nmap[now->right]))
+            {
+                nmap[now] = true;
+                cout << now->val << endl;
+                ret.push_back(now->val);
+                nodeStack.pop();
             }
         }
 
-        for (auto x : dp)
-        {
-            for (auto y : x)
-                cout << " " << y;
-
-            cout << endl;
-        }
-
-        return dp[ssize][amount];
+        return ret;
     }
 };
-
-int stringToInteger(string input)
-{
-    return stoi(input);
-}
 
 void trimLeftTrailingSpaces(string &input)
 {
@@ -70,21 +70,78 @@ void trimRightTrailingSpaces(string &input)
                 input.end());
 }
 
-vector<int> stringToIntegerVector(string input)
+TreeNode *stringToTreeNode(string input)
 {
-    vector<int> output;
     trimLeftTrailingSpaces(input);
     trimRightTrailingSpaces(input);
     input = input.substr(1, input.length() - 2);
+    if (!input.size())
+    {
+        return nullptr;
+    }
+
+    string item;
     stringstream ss;
     ss.str(input);
-    string item;
-    char delim = ',';
-    while (getline(ss, item, delim))
+
+    getline(ss, item, ',');
+    TreeNode *root = new TreeNode(stoi(item));
+    queue<TreeNode *> nodeQueue;
+    nodeQueue.push(root);
+
+    while (true)
     {
-        output.push_back(stoi(item));
+        TreeNode *node = nodeQueue.front();
+        nodeQueue.pop();
+
+        if (!getline(ss, item, ','))
+        {
+            break;
+        }
+
+        trimLeftTrailingSpaces(item);
+        if (item != "null")
+        {
+            int leftNumber = stoi(item);
+            node->left = new TreeNode(leftNumber);
+            nodeQueue.push(node->left);
+        }
+
+        if (!getline(ss, item, ','))
+        {
+            break;
+        }
+
+        trimLeftTrailingSpaces(item);
+        if (item != "null")
+        {
+            int rightNumber = stoi(item);
+            node->right = new TreeNode(rightNumber);
+            nodeQueue.push(node->right);
+        }
     }
-    return output;
+    return root;
+}
+
+string integerVectorToString(vector<int> list, int length = -1)
+{
+    if (length == -1)
+    {
+        length = list.size();
+    }
+
+    if (length == 0)
+    {
+        return "[]";
+    }
+
+    string result;
+    for (int index = 0; index < length; index++)
+    {
+        int number = list[index];
+        result += to_string(number) + ", ";
+    }
+    return "[" + result.substr(0, result.length() - 2) + "]";
 }
 
 int main()
@@ -92,13 +149,11 @@ int main()
     string line;
     while (getline(cin, line))
     {
-        int amount = stringToInteger(line);
-        getline(cin, line);
-        vector<int> coins = stringToIntegerVector(line);
+        TreeNode *root = stringToTreeNode(line);
 
-        int ret = Solution().change(amount, coins);
+        vector<int> ret = Solution().postorderTraversal(root);
 
-        string out = to_string(ret);
+        string out = integerVectorToString(ret);
         cout << out << endl;
     }
     return 0;
