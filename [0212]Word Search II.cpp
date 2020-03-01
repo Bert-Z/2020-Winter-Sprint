@@ -2,9 +2,11 @@
 
 using namespace std;
 
-class Solution {
+class Solution
+{
 public:
-    vector<string> findWords(vector<vector<char>>& board, vector<string>& words) {
+    vector<string> findWords(vector<vector<char>> &board, vector<string> &words)
+    {
         
     }
 };
